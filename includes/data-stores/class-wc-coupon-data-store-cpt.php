@@ -189,7 +189,14 @@ class WC_Coupon_Data_Store_CPT extends WC_Data_Store_WP implements WC_Coupon_Dat
 		$this->update_post_meta( $coupon );
 		$coupon->apply_changes();
 		delete_transient( 'rest_api_coupons_type_count' );
-		do_action( 'woocommerce_update_coupon', $coupon->get_id(), $coupon );
+		
+		$date_created_gmt  = NULL !== $coupon->get_date_created( 'edit' ) ? $coupon->get_date_created( 'edit' )->getTimestamp() : '';
+		$date_modified_gmt = NULL !== $coupon->get_date_modified( 'edit' ) ? $coupon->get_date_modified( 'edit' )->getTimestamp() : '';
+
+		// run the update webhook only when the coupon is being modifed and not when it is being created.
+		if ( $date_created_gmt !== '' && $date_created_gmt !== $date_modified_gmt ) {
+			do_action( 'woocommerce_update_coupon', $coupon->get_id(), $coupon );
+		}
 	}
 
 	/**
