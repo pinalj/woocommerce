@@ -137,7 +137,7 @@ function wc_create_page( $slug, $option = '', $page_title = '', $page_content = 
 /**
  * Output admin fields.
  *
- * Loops though the woocommerce options array and outputs each field.
+ * Loops through the woocommerce options array and outputs each field.
  *
  * @param array $options Opens array to output.
  */
@@ -214,19 +214,23 @@ function wc_maybe_adjust_line_item_product_stock( $item, $item_quantity = -1 ) {
 		return false;
 	}
 
-	$diff = $item_quantity - $already_reduced_stock;
+	$order                  = $item->get_order();
+	$refunded_item_quantity = $order->get_qty_refunded_for_item( $item->get_id() );
+	$diff                   = $item_quantity + $refunded_item_quantity - $already_reduced_stock;
 
 	if ( $diff < 0 ) {
 		$new_stock = wc_update_product_stock( $product, $diff * -1, 'increase' );
-	} else {
+	} elseif ( $diff > 0 ) {
 		$new_stock = wc_update_product_stock( $product, $diff, 'decrease' );
+	} else {
+		return false;
 	}
 
 	if ( is_wp_error( $new_stock ) ) {
 		return $new_stock;
 	}
 
-	$item->update_meta_data( '_reduced_stock', $item_quantity );
+	$item->update_meta_data( '_reduced_stock', $item_quantity + $refunded_item_quantity );
 	$item->save();
 
 	return array(
@@ -424,6 +428,11 @@ function wc_render_action_buttons( $actions ) {
  */
 function wc_render_invalid_variation_notice( $product_object ) {
 	global $wpdb;
+
+	// Give ability for extensions to hide this notice.
+	if ( ! apply_filters( 'woocommerce_show_invalid_variations_notice', true, $product_object ) ) {
+		return;
+	}
 
 	$variation_ids = $product_object ? $product_object->get_children() : array();
 

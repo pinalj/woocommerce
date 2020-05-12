@@ -4,11 +4,11 @@
  *
  * Returns an array of country states. This deprecates and replaces the /states/ directory found in older versions.
  * States should be defined in English and translated native through localisation files.
- * Country codes and states (or province) names should follow the ISO_3166-2 standard (https://en.wikipedia.org/wiki/ISO_3166-2).
+ * Country codes and states (or province) names should follow the Unicode CLDR recommendation (http://cldr.unicode.org/translation/country-names).
  * Countries defined with empty arrays have no states.
  *
- * @package WooCommerce/i18n
- * @version 3.6.0
+ * @package WooCommerce\i18n
+ * @version 3.8.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -285,7 +285,7 @@ return array(
 		'CN27' => __( 'Gansu / &#29976;&#32899;', 'woocommerce' ),
 		'CN28' => __( 'Qinghai / &#38738;&#28023;', 'woocommerce' ),
 		'CN29' => __( 'Ningxia Hui / &#23425;&#22799;', 'woocommerce' ),
-		'CN30' => __( 'Macau / &#28595;&#38376;', 'woocommerce' ),
+		'CN30' => __( 'Macao / &#28595;&#38376;', 'woocommerce' ),
 		'CN31' => __( 'Tibet / &#35199;&#34255;', 'woocommerce' ),
 		'CN32' => __( 'Xinjiang / &#26032;&#30086;', 'woocommerce' ),
 	),
@@ -349,6 +349,26 @@ return array(
 	),
 	'FI' => array(),
 	'FR' => array(),
+	'GH' => array( // Ghanaian Regions.
+		'AF' => __( 'Ahafo', 'woocommerce' ),
+		'AH' => __( 'Ashanti', 'woocommerce' ),
+		'AV' => __( 'Avannaata Kommunia', 'woocommerce' ),
+		'BA' => __( 'Brong-Ahafo', 'woocommerce' ),
+		'BO' => __( 'Bono', 'woocommerce' ),
+		'BE' => __( 'Bono East', 'woocommerce' ),
+		'CP' => __( 'Central', 'woocommerce' ),
+		'EP' => __( 'Eastern', 'woocommerce' ),
+		'AA' => __( 'Greater Accra', 'woocommerce' ),
+		'NE' => __( 'North East', 'woocommerce' ),
+		'NP' => __( 'Northern', 'woocommerce' ),
+		'OT' => __( 'Oti', 'woocommerce' ),
+		'SV' => __( 'Savannah', 'woocommerce' ),
+		'UE' => __( 'Upper East', 'woocommerce' ),
+		'UW' => __( 'Upper West', 'woocommerce' ),
+		'TV' => __( 'Volta', 'woocommerce' ),
+		'WP' => __( 'Western', 'woocommerce' ),
+		'WN' => __( 'Western North', 'woocommerce' ),
+	),
 	'GP' => array(),
 	'GR' => array( // Greek Regions.
 		'I' => __( 'Αττική', 'woocommerce' ),
@@ -698,6 +718,26 @@ return array(
 	),
 	'KR' => array(),
 	'KW' => array(),
+	'LA' => array(
+		'AT' => __( 'Attapeu', 'woocommerce' ),
+		'BK' => __( 'Bokeo', 'woocommerce' ),
+		'BL' => __( 'Bolikhamsai', 'woocommerce' ),
+		'CH' => __( 'Champasak', 'woocommerce' ),
+		'HO' => __( 'Houaphanh', 'woocommerce' ),
+		'KH' => __( 'Khammouane', 'woocommerce' ),
+		'LM' => __( 'Luang Namtha', 'woocommerce' ),
+		'LP' => __( 'Luang Prabang', 'woocommerce' ),
+		'OU' => __( 'Oudomxay', 'woocommerce' ),
+		'PH' => __( 'Phongsaly', 'woocommerce' ),
+		'SL' => __( 'Salavan', 'woocommerce' ),
+		'SV' => __( 'Savannakhet', 'woocommerce' ),
+		'VI' => __( 'Vientiane Province', 'woocommerce' ),
+		'VT' => __( 'Vientiane', 'woocommerce' ),
+		'XA' => __( 'Sainyabuli', 'woocommerce' ),
+		'XE' => __( 'Sekong', 'woocommerce' ),
+		'XI' => __( 'Xiangkhouang', 'woocommerce' ),
+		'XS' => __( 'Xaisomboun', 'woocommerce' ),
+	),
 	'LB' => array(),
 	'LR' => array( // Liberia provinces.
 		'BM' => __( 'Bomi', 'woocommerce' ),
@@ -914,8 +954,6 @@ return array(
 
 	/**
 	 * Philippine Provinces.
-	 *
-	 * @todo DAC Needs to be updated when ISO code is assigned.
 	 */
 	'PH' => array(
 		'ABR' => __( 'Abra', 'woocommerce' ),
@@ -1407,6 +1445,17 @@ return array(
 		'UG113' => __( 'Wakiso', 'woocommerce' ),
 		'UG313' => __( 'Yumbe', 'woocommerce' ),
 		'UG330' => __( 'Zombo', 'woocommerce' ),
+	),
+	'UM' => array(
+		'81' => __( 'Baker Island', 'woocommerce' ),
+		'84' => __( 'Howland Island', 'woocommerce' ),
+		'86' => __( 'Jarvis Island', 'woocommerce' ),
+		'67' => __( 'Johnston Atoll', 'woocommerce' ),
+		'89' => __( 'Kingman Reef', 'woocommerce' ),
+		'71' => __( 'Midway Atoll', 'woocommerce' ),
+		'76' => __( 'Navassa Island', 'woocommerce' ),
+		'95' => __( 'Palmyra Atoll', 'woocommerce' ),
+		'79' => __( 'Wake Island', 'woocommerce' ),
 	),
 	'US' => array( // United States.
 		'AL' => __( 'Alabama', 'woocommerce' ),

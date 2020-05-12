@@ -1,4 +1,3 @@
-/* jshint node:true */
 module.exports = function( grunt ) {
 	'use strict';
 	var sass = require( 'node-sass' );
@@ -14,12 +13,9 @@ module.exports = function( grunt ) {
 			php: 'includes'
 		},
 
-		// JavaScript linting with JSHint.
-		jshint: {
-			options: {
-				jshintrc: '.jshintrc'
-			},
-			all: [
+		// JavaScript linting with ESLint.
+		eslint: {
+			src: [
 				'<%= dirs.js %>/admin/*.js',
 				'!<%= dirs.js %>/admin/*.min.js',
 				'<%= dirs.js %>/frontend/*.js',
@@ -148,11 +144,29 @@ module.exports = function( grunt ) {
 		// Minify all .css files.
 		cssmin: {
 			minify: {
-				expand: true,
-				cwd: '<%= dirs.css %>/',
-				src: ['*.css'],
-				dest: '<%= dirs.css %>/',
-				ext: '.css'
+				files: [
+					{
+						expand: true,
+						cwd: '<%= dirs.css %>/',
+						src: ['*.css'],
+						dest: '<%= dirs.css %>/',
+						ext: '.css'
+					},
+					{
+						expand: true,
+						cwd: '<%= dirs.css %>/photoswipe/',
+						src: ['*.css', '!*.min.css'],
+						dest: '<%= dirs.css %>/photoswipe/',
+						ext: '.min.css'
+					},
+					{
+						expand: true,
+						cwd: '<%= dirs.css %>/photoswipe/default-skin/',
+						src: ['*.css', '!*.min.css'],
+						dest: '<%= dirs.css %>/photoswipe/default-skin/',
+						ext: '.min.css'
+					}
+				]
 			}
 		},
 
@@ -174,69 +188,13 @@ module.exports = function( grunt ) {
 			},
 			js: {
 				files: [
+					'GruntFile.js',
 					'<%= dirs.js %>/admin/*js',
 					'<%= dirs.js %>/frontend/*js',
 					'!<%= dirs.js %>/admin/*.min.js',
 					'!<%= dirs.js %>/frontend/*.min.js'
 				],
-				tasks: ['jshint', 'uglify']
-			}
-		},
-
-		// Generate POT files.
-		makepot: {
-			options: {
-				type: 'wp-plugin',
-				domainPath: 'i18n/languages',
-				potHeaders: {
-					'report-msgid-bugs-to': 'https://github.com/woocommerce/woocommerce/issues',
-					'language-team': 'LANGUAGE <EMAIL@ADDRESS>'
-				}
-			},
-			dist: {
-				options: {
-					potFilename: 'woocommerce.pot',
-					exclude: [
-						'vendor/.*',
-						'tests/.*',
-						'tmp/.*'
-					]
-				}
-			}
-		},
-
-		// Check textdomain errors.
-		checktextdomain: {
-			options:{
-				text_domain: 'woocommerce',
-				keywords: [
-					'__:1,2d',
-					'_e:1,2d',
-					'_x:1,2c,3d',
-					'esc_html__:1,2d',
-					'esc_html_e:1,2d',
-					'esc_html_x:1,2c,3d',
-					'esc_attr__:1,2d',
-					'esc_attr_e:1,2d',
-					'esc_attr_x:1,2c,3d',
-					'_ex:1,2c,3d',
-					'_n:1,2,4d',
-					'_nx:1,2,4c,5d',
-					'_n_noop:1,2,3d',
-					'_nx_noop:1,2,3c,4d'
-				]
-			},
-			files: {
-				src:  [
-					'**/*.php',               // Include all files
-					'!includes/libraries/**', // Exclude libraries/
-					'!node_modules/**',       // Exclude node_modules/
-					'!tests/**',              // Exclude tests/
-					'!vendor/**',             // Exclude vendor/
-					'!tmp/**',                // Exclude tmp/
-					'!packages/*/vendor/**'   // Exclude packages/*/vendor
-				],
-				expand: true
+				tasks: ['eslint','uglify']
 			}
 		},
 
@@ -260,7 +218,7 @@ module.exports = function( grunt ) {
 					'echo "Generating contributor list since <%= fromDate %>"',
 					'./node_modules/.bin/githubcontrib --owner woocommerce --repo woocommerce --fromDate <%= fromDate %>' +
 					' --authToken <%= authToken %> --cols 6 --sortBy contributions --format md --sortOrder desc' +
-					' --showlogin true > contributors.md'
+					' --showlogin true --sha <%= sha %> --filter renovate-bot > contributors.md'
 				].join( '&&' )
 			}
 		},
@@ -275,6 +233,11 @@ module.exports = function( grunt ) {
 							message: 'What date (YYYY-MM-DD) should we get contributions since?'
 						},
 						{
+							config: 'sha',
+							type: 'input',
+							message: 'What branch should we get contributors from?'
+						},
+						{
 							config: 'authToken',
 							type: 'input',
 							message: '(optional) Provide a personal access token.' +
@@ -284,6 +247,7 @@ module.exports = function( grunt ) {
 				}
 			}
 		},
+
 		// PHP Code Sniffer.
 		phpcs: {
 			options: {
@@ -324,9 +288,7 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks( 'grunt-rtlcss' );
 	grunt.loadNpmTasks( 'grunt-postcss' );
 	grunt.loadNpmTasks( 'grunt-stylelint' );
-	grunt.loadNpmTasks( 'grunt-wp-i18n' );
-	grunt.loadNpmTasks( 'grunt-checktextdomain' );
-	grunt.loadNpmTasks( 'grunt-contrib-jshint' );
+	grunt.loadNpmTasks( 'gruntify-eslint' );
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-contrib-cssmin' );
 	grunt.loadNpmTasks( 'grunt-contrib-concat' );
@@ -338,12 +300,11 @@ module.exports = function( grunt ) {
 	// Register tasks.
 	grunt.registerTask( 'default', [
 		'js',
-		'css',
-		'i18n'
+		'css'
 	]);
 
 	grunt.registerTask( 'js', [
-		'jshint',
+		'eslint',
 		'uglify:admin',
 		'uglify:frontend'
 	]);
@@ -376,11 +337,6 @@ module.exports = function( grunt ) {
 	// Only an alias to 'default' task.
 	grunt.registerTask( 'dev', [
 		'default'
-	]);
-
-	grunt.registerTask( 'i18n', [
-		'checktextdomain',
-		'makepot'
 	]);
 
 	grunt.registerTask( 'e2e-tests', [
