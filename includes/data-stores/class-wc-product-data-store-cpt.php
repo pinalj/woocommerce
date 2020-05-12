@@ -266,7 +266,13 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 
 		$product->apply_changes();
 
-		do_action( 'woocommerce_update_product', $product->get_id(), $product );
+		$date_created_gmt  = NULL !== $product->get_date_created( 'edit' ) ? $product->get_date_created( 'edit' )->getTimestamp() : '';
+		$date_modified_gmt = NULL !== $product->get_date_modified( 'edit' ) ? $product->get_date_modified( 'edit' )->getTimestamp() : '';
+
+		// run the update webhook only when the product is being modifed and not when it is being created.
+		if ( $date_created_gmt !== '' && $date_created_gmt !== $date_modified_gmt ) {
+			do_action( 'woocommerce_update_product', $product->get_id(), $product );
+		}
 	}
 
 	/**

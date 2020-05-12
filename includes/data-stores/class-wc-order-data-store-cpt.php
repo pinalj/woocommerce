@@ -165,9 +165,12 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 		// Fire a hook depending on the status - this should be considered a creation if it was previously draft status.
 		$new_status = $order->get_status( 'edit' );
 
+		$date_created_gmt  = NULL !== $order->get_date_created( 'edit' ) ? $order->get_date_created( 'edit' )->getTimestamp() : '';
+		$date_modified_gmt = NULL !== $order->get_date_modified( 'edit' ) ? $order->get_date_modified( 'edit' )->getTimestamp() : '';
+
 		if ( $new_status !== $previous_status && in_array( $previous_status, array( 'new', 'auto-draft', 'draft' ), true ) ) {
 			do_action( 'woocommerce_new_order', $order->get_id(), $order );
-		} else {
+		} else if ( $date_created_gmt !== '' && $date_created_gmt !== $date_modified_gmt ) {
 			do_action( 'woocommerce_update_order', $order->get_id(), $order );
 		}
 	}

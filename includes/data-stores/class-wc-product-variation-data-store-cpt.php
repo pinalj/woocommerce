@@ -271,7 +271,13 @@ class WC_Product_Variation_Data_Store_CPT extends WC_Product_Data_Store_CPT impl
 
 		$this->clear_caches( $product );
 
-		do_action( 'woocommerce_update_product_variation', $product->get_id(), $product );
+		$date_created_gmt  = NULL !== $product->get_date_created( 'edit' ) ? $product->get_date_created( 'edit' )->getTimestamp() : '';
+		$date_modified_gmt = NULL !== $product->get_date_modified( 'edit' ) ? $product->get_date_modified( 'edit' )->getTimestamp() : '';
+
+		// run the update webhook only when the product is being modifed and not when it is being created.
+		if ( $date_created_gmt !== '' && $date_created_gmt !== $date_modified_gmt ) {
+			do_action( 'woocommerce_update_product_variation', $product->get_id(), $product );
+		}
 	}
 
 	/*
